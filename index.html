@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>StreamFlix — Sample Streaming Landing Page</title>
+<style>
+/* ===== Reset & base ===== */
+:root{
+  --bg:#0b0e12;
+  --card:#0f1720;
+  --muted:#9aa4b2;
+  --accent:#e50914; /* Netflix-like accent but not trademarked name */
+  --glass: rgba(255,255,255,0.06);
+  --glass-2: rgba(255,255,255,0.03);
+  --radius:12px;
+  --max-width:1200px;
+  --fw-regular: 400;
+  --fw-bold: 700;
+  --transition: 250ms cubic-bezier(.2,.9,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background: linear-gradient(180deg, #071017 0%, #05060a 100%);
+  color:#e6eef6;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.4;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ===== Utility & layout ===== */
+.container{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:28px;
+}
+
+/* ===== Header / Nav ===== */
+.header{
+  position:sticky;
+  top:0;
+  z-index:60;
+  backdrop-filter: blur(6px);
+  background: linear-gradient(to bottom, rgba(7,10,18,0.78), rgba(7,10,18,0.3));
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+.header-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  height:72px;
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:0 20px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:inherit;
+}
+.logo {
+  width:36px;height:36px;
+  border-radius:6px;
+  background: linear-gradient(135deg,#ff6b6b,#e50914);
+  display:inline-grid;
+  place-items:center;
+  font-weight:800;
+  font-size:15px;
+  color:white;
+  letter-spacing:0.6px;
+  box-shadow:0 6px 18px rgba(229,9,20,0.16), inset 0 -6px 18px rgba(0,0,0,0.12);
+}
+.brand h1{
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:0.2px;
+  margin:0;
+}
+.nav{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+.nav a{
+  color:var(--muted);
+  text-decoration:none;
+  font-size:14px;
+  padding:8px 10px;
+  border-radius:8px;
+  transition: color var(--transition), background var(--transition);
+}
+.nav a:hover{ color: #fff; background: var(--glass); }
+.cta{
+  background: linear-gradient(90deg, var(--accent), #ff745a);
+  color:white;
+  padding:8px 14px;
+  border-radius:8px;
+  font-weight:700;
+  box-shadow: 0 8px 24px rgba(229,9,20,0.18);
+  border: none;
+  cursor:pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.cta:hover{ transform: translateY(-2px); box-shadow: 0 12px 28px rgba(229,9,20,0.22); }
+
+/* ===== Hero ===== */
+.hero{
+  padding:48px 20px 80px;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:28px;
+  align-items:center;
+}
+@media(min-width:980px){
+  .hero{ grid-template-columns: 1fr 420px; padding:70px 20px 110px; }
+}
+.hero-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:16px;
+  padding:28px;
+  box-shadow: 0 10px 40px rgba(5,6,10,0.6);
+  position:relative;
+}
+.kicker{
+  display:inline-block;
+  font-size:13px;
+  font-weight:700;
+  color:var(--accent);
+  letter-spacing:0.6px;
+  margin-bottom:10px;
+  padding:6px 10px;
+  background:rgba(229,9,20,0.06);
+  border-radius:999px;
+}
+.hero h2{
+  font-size:36px;
+  line-height:1.02;
+  margin:6px 0 12px;
+  font-weight:800;
+  letter-spacing:-0.4px;
+}
+.hero p.lead{
+  color:var(--muted);
+  font-size:16px;
+  margin-bottom:18px;
+  max-width:60ch;
+}
+
+/* Search/Join form */
+.join-row{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+.input{
+  flex:1 1 280px;
+  display:flex;
+  gap:8px;
+  background:var(--glass);
+  border-radius:10px;
+  padding:10px 12px;
+  align-items:center;
+  border:1px solid rgba(255,255,255,0.02);
+}
+.input input{
+  background:transparent;
+  border:0;
+  outline:0;
+  color:inherit;
+  font-size:15px;
+  flex:1;
+}
+.select{
+  background:var(--glass-2);
+  padding:10px 12px;
+  border-radius:10px;
+  font-size:14px;
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,0.02);
+}
+.hero-media{
+  position:relative;
+  border-radius:14px;
+  overflow:hidden;
+  min-height:220px;
+  box-shadow: 0 20px 60px rgba(2,6,12,0.7);
+  background:
+    radial-gradient(1200px 300px at 0% 20%, rgba(230,0,36,0.12), transparent 10%),
+    linear-gradient(180deg, rgba(20,24,30,0.6), rgba(0,0,0,0.5));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.hero-media .badge{
+  position:absolute;
+  left:16px; bottom:16px;
+  background: rgba(0,0,0,0.45);
+  padding:8px 12px;
+  border-radius:10px;
+  font-weight:700;
+  letter-spacing:0.4px;
+}
+
+/* ===== Carousel / Featured row ===== */
+.row-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:18px 0 12px;
+}
+.row-title h3{ font-size:18px; font-weight:700;}
+.row{
+  overflow:hidden;
+  padding-bottom:6px;
+}
+.cards{
+  display:flex;
+  gap:14px;
+  transition: transform 400ms cubic-bezier(.2,.9,.3,1);
+  padding:6px;
+}
+.card{
+  min-width:170px;
+  max-width:170px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow: 0 8px 34px rgba(0,0,0,0.6);
+}
+.card .thumb{
+  height:240px;
+  background: linear-gradient(180deg, #111215, #0d0f13);
+  display:flex;
+  align-items:flex-end;
+  padding:12px;
+  font-weight:700;
+  font-size:13px;
+}
+.card .meta{
+  padding:10px 12px;
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* card hover state */
+.card:hover{ transform: translateY(-8px); transition: transform 280ms ease; }
+
+/* ===== Grid of categories ===== */
+.grid{
+  display:grid;
+  gap:14px;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media(min-width:900px){
+  .grid{ grid-template-columns: repeat(3, 1fr); }
+}
+.category{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:12px;
+  padding:14px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+.category .img{
+  width:86px;
+  height:86px;
+  border-radius:8px;
+  background: linear-gradient(180deg,#1b1f24,#0a0d10);
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:18px;
+}
+.category .info h4{ margin-bottom:6px; font-size:16px; }
+.category .info p{ color:var(--muted); font-size:13px; }
+
+/* ===== Footer ===== */
+.footer{
+  margin-top:38px;
+  padding:30px 20px;
+  border-top:1px solid rgba(255,255,255,0.02);
+  color:var(--muted);
+  font-size:13px;
+}
+.footer .cols{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.footer a{ color:var(--muted); text-decoration:none; }
+.footer a:hover{ color:white; }
+
+/* ===== Small details ===== */
+.pill{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  background:rgba(255,255,255,0.02);
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* ===== Accessibility / focus ===== */
+a:focus,button:focus,input:focus{ outline: 3px solid rgba(255,255,255,0.06); outline-offset:3px; }
+
+/* ===== Helpers for demo placeholders ===== */
+.bg-image{
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+}
+.small{ font-size:13px; }
+
+/* ===== Responsive tweaks ===== */
+@media(max-width:640px){
+  .header-inner{ padding:0 12px; height:64px; }
+  .hero h2{ font-size:28px; }
+  .card .thumb{ height:180px; }
+  .logo{ width:32px;height:32px; font-size:13px;}
+}
+</style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header-inner">
+      <a class="brand" href="#" aria-label="StreamFlix home">
+        <div class="logo">SF</div>
+        <div>
+          <h1>StreamFlix</h1>
+          <div class="small" style="color:var(--muted);font-weight:600">Premium streaming</div>
+        </div>
+      </a>
+
+      <nav class="nav" role="navigation" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a href="#tv">TV Shows</a>
+        <a href="#movies">Movies</a>
+        <a href="#new">New & Popular</a>
+        <a href="#mylist">My List</a>
+      </nav>
+
+      <div style="display:flex;align-items:center;gap:12px;">
+        <select class="select" aria-label="Language selector">
+          <option>EN</option>
+          <option>HI</option>
+        </select>
+        <button class="cta" aria-label="Sign in">Sign in</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container" id="home" aria-labelledby="hero-heading">
+      <div class="hero-card" role="region" aria-labelledby="hero-heading">
+        <span class="kicker">STREAM ANYWHERE</span>
+        <h2 id="hero-heading">Find your next obsession</h2>
+        <p class="lead">StreamFlix brings the world's best movies, TV shows and originals in one place. Browse curated picks, create lists, and watch on any device.</p>
+
+        <div class="join-row" aria-hidden="false">
+          <div class="input" role="search" aria-label="Search for movies">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="opacity:0.7"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6"></circle></svg>
+            <input type="search" placeholder="Search for a title, actor, or genre" aria-label="Search input"/>
+          </div>
+          <select class="select" aria-label="Choose plan">
+            <option>Choose plan</option>
+            <option>Basic</option>
+            <option>Standard</option>
+            <option>Premium</option>
+          </select>
+          <button class="cta" aria-label="Get started">Get Started</button>
+        </div>
+
+        <div style="margin-top:18px;color:var(--muted);font-size:13px">
+          No credit card needed. Cancel anytime.
+        </div>
+      </div>
+
+      <div class="hero-media" aria-hidden="true" role="img" aria-label="Hero media preview">
+        <div style="max-width:360px;padding:20px;text-align:left;">
+          <div style="font-weight:800;font-size:20px;margin-bottom:8px">Featured: The Red Signal</div>
+          <div style="color:var(--muted);margin-bottom:14px">A mysterious thriller about a scientist who decodes a signal from deep space.</div>
+          <div style="display:flex;gap:8px;">
+            <button class="cta" style="padding:8px 12px;font-size:14px">Play</button>
+            <button class="pill small">More info</button>
+          </div>
+        </div>
+        <div class="badge">4K • UHD</div>
+      </div>
+    </section>
+
+    <section class="container" aria-labelledby="featured-title">
+      <div class="row-title">
+        <h3 id="featured-title">Popular on StreamFlix</h3>
+        <div class="small" style="color:var(--muted)">Top picks for you</div>
+      </div>
+
+      <div class="row" role="list" aria-label="Popular titles">
+        <div class="cards" id="cards-row">
+          <!-- Sample cards; replace background-image inline to use real images -->
+          <article class="card" role="listitem" aria-label="Card: Moonfall">
+            <div class="thumb bg-image" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.45)), url('https://picsum.photos/400/600?random=11');">
+              <span style="color:white">Moonfall</span>
+            </div>
+            <div class="meta">
+              2024 • Action • 2h 10m
+            </div>
+          </article>
+
+          <article class="card" role="listitem" aria-label="Card: The Runner">
+            <div class="thumb bg-image" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.45)), url('https://picsum.photos/400/600?random=12');">
+              <span style="color:white">The Runner</span>
+            </div>
+            <div class="meta">
+              2023 • Drama • 1h 48m
+            </div>
+          </article>
+
+          <article class="card" role="listitem" aria-label="Card: Neon City">
+            <div class="thumb bg-image" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.45)), url('https://picsum.photos/400/600?random=13');">
+              <span style="color:white">Neon City</span>
+            </div>
+            <div class="meta">
+              2025 • Sci-Fi • 2h 4m
+            </div>
+          </article>
+
+          <article class="card" role="listitem" aria-label="Card: Last Harbor">
+            <div class="thumb bg-image" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.45)), url('https://picsum.photos/400/600?random=14');">
+              <span style="color:white">Last Harbor</span>
+            </div>
+            <div class="meta">
+              2022 • Thriller • 1h 55m
+            </div>
+          </article>
+
+          <article class="card" role="listitem" aria-label="Card: Wild Horizon">
+            <div class="thumb bg-image" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.45)), url('https://picsum.photos/400/600?random=15');">
+              <span style="color:white">Wild Horizon</span>
+            </div>
+            <div class="meta">
+              2021 • Adventure • 2h 20m
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" aria-labelledby="categories">
+      <div class="row-title">
+        <h3 id="categories">Browse by category</h3>
+        <div class="small" style="color:var(--muted)">Handpicked categories</div>
+      </div>
+
+      <div class="grid" role="list">
+        <div class="category" role="listitem">
+          <div class="img">A</div>
+          <div class="info">
+            <h4>Action</h4>
+            <p>High-octane movies with fast pacing and stunts.</p>
+          </div>
+        </div>
+
+        <div class="category" role="listitem">
+          <div class="img">D</div>
+          <div class="info">
+            <h4>Drama</h4>
+            <p>Character-driven stories and award-winning films.</p>
+          </div>
+        </div>
+
+        <div class="category" role="listitem">
+          <div class="img">S</div>
+          <div class="info">
+            <h4>Sci-Fi</h4>
+            <p>Futuristic, speculative, and imaginative adventures.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" aria-labelledby="footer-join" style="margin-top:26px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div>
+          <h4 style="font-size:18px;margin-bottom:6px">Ready to watch?</h4>
+          <div style="color:var(--muted)">Enter your email to create or restart your membership.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input class="input" style="min-width:220px;padding:10px 12px;border-radius:10px;" placeholder="Email address" aria-label="Email"/>
+          <button class="cta">Get Started</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div style="font-weight:700">StreamFlix</div>
+        <div class="cols" style="display:flex;gap:16px;align-items:center;">
+          <a href="#">Help Center</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Privacy</a>
+          <a href="#">Cookies</a>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;color:var(--muted);font-size:13px">
+        © <span id="year"></span> StreamFlix. This is a demo, not the real streaming site.
+      </div>
+    </div>
+  </footer>
+
+<script>
+/* tiny client behaviors - purely optional */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* Basic horizontal scroll by wheel for the cards row (improves UX on desktop) */
+const cards = document.getElementById('cards-row');
+cards.addEventListener('wheel', (e) => {
+  if (e.deltaY === 0) return;
+  e.preventDefault();
+  cards.scrollLeft += e.deltaY + e.deltaX;
+});
+</script>
+</body>
+</html>
